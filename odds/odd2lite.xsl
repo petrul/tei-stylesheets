@@ -4,7 +4,6 @@
 		xmlns:dcr="http://www.isocat.org/ns/dcr"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:html="http://www.w3.org/1999/xhtml"
-		xmlns:s="http://www.ascc.net/xml/schematron" 
                 xmlns:rng="http://relaxng.org/ns/structure/1.0"
                 xmlns:tei="http://www.tei-c.org/ns/1.0"
                 xmlns:teix="http://www.tei-c.org/ns/Examples"
@@ -12,9 +11,9 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-                exclude-result-prefixes="fo a tei html s rng sch xsi
+                exclude-result-prefixes="fo a tei html rng sch xsi
 					 teix xs dcr"
-                version="2.0">
+                version="3.0">
   <xsl:import href="../common/verbatim.xsl"/>
   <xsl:import href="teiodds.xsl"/> 
   <xsl:import href="classatts.xsl"/>
@@ -510,7 +509,7 @@ of this software, even if advised of the possibility of such damage.
                     <xsl:value-of select="concat($idPrefix,@ident)"/>
                   </xsl:attribute>
                   <hi>
-                    <ref target="http://www.tei-c.org/release/doc/tei-p5-doc/{$documentationLanguage}/html/ref-{@ident}.html">
+                    <ref target="https://www.tei-c.org/release/doc/tei-p5-doc/{$documentationLanguage}/html/ref-{@ident}.html">
                       <xsl:value-of select="@ident"/>
                     </ref>
                   </hi>:
@@ -587,7 +586,7 @@ of this software, even if advised of the possibility of such damage.
         </xsl:if>
         
          <xsl:copy-of select="@xml:lang"/>
-         <xsl:value-of select="."/>
+         <xsl:value-of select="normalize-space(.)"/>
       </seg>
   </xsl:template>
 

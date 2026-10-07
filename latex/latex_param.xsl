@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:s="http://www.ascc.net/xml/schematron"
-                
+<xsl:stylesheet                 
                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                 xmlns:rng="http://relaxng.org/ns/structure/1.0"
                 xmlns:tei="http://www.tei-c.org/ns/1.0"
                 xmlns:teix="http://www.tei-c.org/ns/Examples"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                exclude-result-prefixes="s a rng tei teix"
-                version="2.0">
+                exclude-result-prefixes="a rng tei teix"
+                version="3.0">
 
    <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
       <desc>
@@ -125,6 +124,8 @@ the beginning of the document</desc>
 \usepackage{graphicx}
 \usepackage{marginnote}
 
+\renewcommand{\@cite}[1]{#1}
+
 </xsl:text>
 <xsl:if test="not($marginFont='')">
 \renewcommand*{\marginfont}{<xsl:value-of select="$marginFont"/>}
@@ -210,7 +211,7 @@ as a proportion of the page width.</desc>
    <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" class="userpackage" type="string">
       <desc>Configuration to pass to hypersetup.</desc>
    </doc>
-   <xsl:param name="hyperSetup">linkbordercolor=0.75 0.75 0.75,urlbordercolor=0.75 0.75 0.75,bookmarksnumbered=true</xsl:param>
+   <xsl:param name="hyperSetup">citebordercolor=0.75 0.75 0.75,linkbordercolor=0.75 0.75 0.75,urlbordercolor=0.75 0.75 0.75,bookmarksnumbered=true</xsl:param>
 
    <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" class="userpackage" type="string">
       <desc>Depth of nesting of reference documentation when processing ODD</desc>
@@ -242,9 +243,9 @@ characters. The normal characters remain active for LaTeX commands.
   \catcode`⃥=\active \def⃥{\textbackslash}
   \catcode`❴=\active \def❴{\{}
   \catcode`❵=\active \def❵{\}}
-  \def\textJapanese{\fontspec{IPAMincho}}
-  \def\textChinese{\fontspec{HAN NOM A}\XeTeXlinebreaklocale "zh"\XeTeXlinebreakskip = 0pt plus 1pt }
-  \def\textKorean{\fontspec{Baekmuk Gulim} }
+  \def\textJapanese{\fontspec{<xsl:value-of select="$japaneseFont"/>}}
+  \def\textChinese{\fontspec{<xsl:value-of select="$chineseFont"/>}}
+  \def\textKorean{\fontspec{<xsl:value-of select="$koreanFont"/>}}
   \setmonofont{<xsl:value-of select="$typewriterFont"/>}
   <xsl:if test="not($sansFont='')">
     \setsansfont{<xsl:value-of select="$sansFont"/>}
@@ -391,6 +392,13 @@ characters. The normal characters remain active for LaTeX commands.
 <xsl:param name="calligraphicFont">Lucida Calligraphy</xsl:param>
 <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" class="style" type="string"><desc>Command to set margin font</desc>   </doc>
 <xsl:param name="marginFont">\itshape\footnotesize</xsl:param>
+<doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" class="style" type="string"><desc>Font for Chinese script</desc>   </doc>
+<xsl:param name="chineseFont">Noto Sans CJK SC</xsl:param>
+<doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" class="style" type="string"><desc>Font for Korean script</desc>   </doc>
+<xsl:param name="koreanFont">Noto Sans CJK KR</xsl:param>
+<doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" class="style" type="string"><desc>Font for Japanese script</desc>   </doc>
+<xsl:param name="japaneseFont">Noto Sans CJK JP</xsl:param>
+  
   <xsl:param name="longtables">true</xsl:param>
 
    <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" class="layout">
@@ -549,7 +557,7 @@ characters. The normal characters remain active for LaTeX commands.
   {\end{list}\end{raggedright}}
 \newenvironment{specHead}[2]%
  {\vspace{20pt}\hrule\vspace{10pt}%
-  \label{#1}\markright{#2}%
+  \phantomsection\label{#1}\markright{#2}%
 <xsl:text>
   \pdfbookmark[</xsl:text>
       <xsl:value-of select="$specLinkDepth"/>

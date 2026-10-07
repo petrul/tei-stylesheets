@@ -5,7 +5,7 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     exclude-result-prefixes="#all"
-    version="2.0">
+    version="3.0">
     <!-- import base conversion style -->
 
     <xsl:import href="../../../html/html.xsl"/>
@@ -75,7 +75,7 @@ of this software, even if advised of the possibility of such damage.
     <xsl:param name="htmlTitlePrefix">[OTA] </xsl:param>
 
   <xsl:template name="additionalMenu">
-    <xsl:element name="{if ($outputTarget='html5') then 'nav' else 'div'}">
+    <xsl:element name="{if ($outputTarget = ('html5', 'html')) then 'nav' else 'div'}">
       
       <ul class="OTAnav">
 	<li class="navLabel"><span class="bold">O</span>xford <span class="bold"

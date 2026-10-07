@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsl:stylesheet version="2.0" xmlns:xd="http://www.pnp-software.com/XSLTdoc"
+<xsl:stylesheet version="3.0" xmlns:xd="http://www.pnp-software.com/XSLTdoc"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format"
   xmlns:exsl="http://exslt.org/common"
   xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:eg="http://www.tei-c.org/ns/Examples"
@@ -15,7 +15,7 @@
   
   <!-- attribute sets -->
   <xsl:attribute-set name="global.flow.properties">
-    <xsl:attribute name="font-family">GentiumPlus</xsl:attribute>
+    <xsl:attribute name="font-family">GentiumPlus,DejaVu</xsl:attribute>
     <xsl:attribute name="font-size">10pt</xsl:attribute>
     <xsl:attribute name="line-height">2</xsl:attribute>
     <xsl:attribute name="text-align">justify</xsl:attribute>
@@ -29,27 +29,28 @@
   </xsl:attribute-set>
   
   <xsl:attribute-set name="headerfooter.properties">
-    <xsl:attribute name="font-family">Roboto-medium</xsl:attribute>
+    <xsl:attribute name="font-family">Roboto-medium,DejaVu</xsl:attribute>
     <xsl:attribute name="font-size">7pt</xsl:attribute>
   </xsl:attribute-set>
 
   <xsl:attribute-set name="heading.properties">
-    <xsl:attribute name="font-family">Roboto</xsl:attribute>
+    <xsl:attribute name="font-family">Roboto,DejaVu</xsl:attribute>
     <xsl:attribute name="font-size">13pt</xsl:attribute>
     <xsl:attribute name="text-transform">uppercase</xsl:attribute>
     <xsl:attribute name="keep-with-next">always</xsl:attribute>
+    <xsl:attribute name="keep-with-previous">always</xsl:attribute>
     <xsl:attribute name="space-before">1em</xsl:attribute>
     <xsl:attribute name="space-after">1em</xsl:attribute>
   </xsl:attribute-set>
 
   <xsl:attribute-set name="heading.body.properties">
-    <xsl:attribute name="font-family">Roboto-medium</xsl:attribute>
+    <xsl:attribute name="font-family">Roboto-medium,DejaVu</xsl:attribute>
     <xsl:attribute name="keep-with-next">always</xsl:attribute>
     <xsl:attribute name="space-before">1em</xsl:attribute>
   </xsl:attribute-set>
   
   <xsl:attribute-set name="heading.lowerblock.properties">
-    <xsl:attribute name="font-family">Roboto-medium</xsl:attribute>
+    <xsl:attribute name="font-family">Roboto-medium,DejaVu</xsl:attribute>
     <xsl:attribute name="font-size">8.3pt</xsl:attribute>
     <xsl:attribute name="keep-with-next">always</xsl:attribute>
   </xsl:attribute-set>
@@ -73,14 +74,14 @@
   </xsl:attribute-set>
 
   <xsl:attribute-set name="pnr.properties">
-    <xsl:attribute name="font-family">Roboto-medium</xsl:attribute>
+    <xsl:attribute name="font-family">Roboto-medium,DejaVu</xsl:attribute>
     <xsl:attribute name="font-size">7pt</xsl:attribute>
   </xsl:attribute-set>
   
   <xsl:attribute-set name="egXML.properties">
     <xsl:attribute name="text-align">left</xsl:attribute>
     <xsl:attribute name="text-indent">0pt</xsl:attribute>
-    <xsl:attribute name="keep-together.within-page">5</xsl:attribute>
+    <xsl:attribute name="keep-together.within-page">auto</xsl:attribute>
 <!--    <xsl:attribute name="orphans">5</xsl:attribute>
     <xsl:attribute name="widows">5</xsl:attribute>-->
   </xsl:attribute-set>
@@ -154,6 +155,32 @@
       </fo:page-sequence-master>
     </fo:layout-master-set>
   </xsl:template>
+    
+  <!-- If (SVN) metadata are found, include them in a hidden paragraph in the body text. -->
+  <xsl:template name="body-metadata">
+    <xsl:variable name="metadata" select="local:get.SVNkeyword('Id')"/>
+    <xsl:if test="$metadata">
+      <fo:block margin-top="1em" color="white" line-height="0px">
+        <xsl:text>SVN keywords: </xsl:text>
+        <xsl:value-of select="$metadata"/>
+      </fo:block>
+    </xsl:if>
+  </xsl:template>  
+  
+  <!-- This function parses the SVN ID keyword into custom PDF metadata fields. -->
+  <xsl:function name="local:parse.SVN.id">
+    <xsl:for-each select="replace(local:get.SVNkeyword('Id'), '^\$Id:\s*(.*?)\s\$$', '$1')[count(tokenize(., '\s')) = 5]">
+      <pdf:name key="SVN revision" xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+        <xsl:value-of select="tokenize(., '\s+')[2]"/>
+      </pdf:name>
+      <pdf:name key="last changed" xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+        <xsl:value-of select="string-join(tokenize(., '\s+')[position() = (3, 4)], ', ')"/>
+      </pdf:name>
+      <pdf:name key="last changed by" xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+        <xsl:value-of select="tokenize(., '\s+')[5]"/>
+      </pdf:name>
+    </xsl:for-each>
+  </xsl:function>
 
   <!-- ==================================================================================== -->
   <!-- TEXT SKELETON                                                                        -->
@@ -247,8 +274,9 @@
   
   <xsl:template name="front">
     <xsl:call-template name="article.title"/>
+    <xsl:call-template name="body-metadata"/>
     <xsl:apply-templates select="/tei:TEI/tei:text/tei:front/tei:div[@type='abstract']"/>
-    <xsl:apply-templates select="/tei:TEI/tei:teiHeader/tei:profileDesc/tei:textClass"/>
+    <xsl:call-template name="index"/>
     <xsl:call-template name="front.divs"/>
   </xsl:template>
   
@@ -281,14 +309,16 @@
       border-top="solid black 5px" border-bottom="solid black 3px" 
       padding-top="1cm" padding-bottom="1cm">
       <fo:block font-family="GentiumBookBasic" font-style="italic" font-size="24pt" line-height="1.2">
-        <xsl:for-each select="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type = 'main'], /tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[not(@type = 'main')]">
+        <xsl:for-each select="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type = 'main']">
           <xsl:apply-templates/>
-          <xsl:if test="position() != last()">
-            <xsl:text>: </xsl:text>
-          </xsl:if>
         </xsl:for-each>
       </fo:block>
-      <fo:block font-family="Roboto-medium" font-size="11pt" margin-top="1cm">
+      <fo:block font-family="GentiumBookBasic" font-size="16pt" line-height="1.2">
+        <xsl:for-each select="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[not(@type = 'main')]">
+          <xsl:apply-templates/>
+        </xsl:for-each>
+      </fo:block>
+      <fo:block font-family="Roboto-medium,DejaVu" font-size="11pt" margin-top="1cm">
         <xsl:for-each select="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author">
           <xsl:call-template name="enumerate"/>
           <xsl:value-of select="string-join(tei:name/(tei:forename, tei:surname), ' ')"/>
@@ -305,8 +335,8 @@
 
   <xsl:template match="tei:front/tei:div[@type = $div.types.front]">
     <fo:block>
-      <fo:block xsl:use-attribute-sets="heading.properties" font-family="Roboto" font-size="13pt">
-        <xsl:value-of select="i18n:key(concat(@type, '-label'))"/>
+      <fo:block xsl:use-attribute-sets="heading.properties" font-family="Roboto,DejaVu" font-size="13pt">
+        <xsl:value-of select="i18n:key(concat(@type, '-label'), (@xml:lang,$jtei.lang)[1])"/>
       </fo:block>
       <xsl:apply-templates/>
     </fo:block>
@@ -377,9 +407,7 @@
     <xsl:param name="note.context" select="ancestor::*[self::tei:front|self::tei:body|self::tei:back]" tunnel="yes" as="element()?"/>
     <xsl:variable name="note.nr" select="local:get.note.nr(.)"/>
     <!-- only 'pull' subsequent punctuation once (i.e. unless it is done for the preceding element) -->
-    <xsl:if test="not(preceding-sibling::node()[normalize-space()][1][. intersect key('quotation.elements', local-name())])">
-      <xsl:call-template name="include.punctuation"/>
-    </xsl:if>
+    <xsl:call-template name="include.punctuation"/>
     <fo:inline font-size="5.4pt" vertical-align="super">
       <fo:basic-link internal-destination="{$note.context/name()}.note{$note.nr}" id="{$note.context/name()}.noteptr{$note.nr}">
         <xsl:number value="$note.nr" format="{local:format.note.nr($note.context)}"/>
@@ -389,7 +417,7 @@
 
   <!-- group figure contents and headings in a block --> 
   <xsl:template match="tei:figure">
-    <fo:block xsl:use-attribute-sets="block.spacing.properties" keep-together.within-page="5">
+    <fo:block xsl:use-attribute-sets="block.spacing.properties" keep-together.within-page="auto">
       <xsl:for-each select="@xml:id">
         <xsl:attribute name="id"><xsl:value-of select="."/></xsl:attribute>
       </xsl:for-each>
@@ -411,7 +439,7 @@
   </xsl:template>
   
   <xsl:template match="tei:figure/tei:graphic">
-    <fo:external-graphic xsl:use-attribute-sets="imageblock.properties" content-height="scale-down-to-fit" scaling="uniform" src="{resolve-uri(@url, base-uri())}"/>
+    <fo:external-graphic xsl:use-attribute-sets="imageblock.properties" width="100%" content-width="scale-to-fit" content-height="scale-down-to-fit" scaling="uniform" src="{resolve-uri(@url, base-uri())}"/>
   </xsl:template>
   
   <xsl:template match="eg:egXML">
@@ -432,12 +460,14 @@
   </xsl:template>
 
   <xsl:template match="tei:eg">
+    <!-- strip leading blank lines, normalize tabs -->
+    <xsl:variable name="eg" select="replace(., '^(\s*\n+)', '') ! replace(., '\t', '    ')"/>
     <!-- determine maximal amount of preceding whitespace that can be stripped out -->
-    <xsl:variable name="stripIndent" select="min((for $line in tokenize(., '\n')[.] return string-length(replace($line, '^(\s+).*', '$1'))))"/>
-    <fo:block xsl:use-attribute-sets="egXML.properties monospace.properties">
-      <xsl:analyze-string select="." regex="\n">
+    <xsl:variable name="stripIndent" select="min((for $line in tokenize($eg, '\n')[.] return string-length(replace($line, '^(\s*).+', '$1'))))"/>
+    <fo:block xsl:use-attribute-sets="egXML.properties monospace.properties" linefeed-treatment="preserve">
+      <xsl:analyze-string select="$eg" regex="\n">
         <xsl:matching-substring>
-          <fo:block/>
+          <xsl:text>&#10;</xsl:text>
         </xsl:matching-substring>
         <xsl:non-matching-substring>
           <xsl:analyze-string select="if ($stripIndent > 0) then replace(., concat('^\s{', $stripIndent, '}'), '') else ." regex="\s">
@@ -616,7 +646,7 @@
   <!-- replace external <ptr/> with link, whose label = @target -->
   <xsl:template match="tei:ptr[not(@type)]|tei:ref[not(@type)]">
     <fo:basic-link external-destination="{@target}" border="dotted thin grey">
-      <xsl:apply-templates select="if (normalize-space()) then node() else @target"/>
+      <xsl:apply-templates select="if (normalize-space()) then node() else @target ! replace(., '&amp;', '&#8203;&amp;')"/>
     </fo:basic-link>
   </xsl:template>
   
@@ -757,10 +787,12 @@
       <xsl:variable name="marker">
         <xsl:call-template name="get.inline.list.marker"/>
       </xsl:variable>
-      <fo:inline>
-        <xsl:value-of select="$marker"/>
-      </fo:inline>
-      <xsl:text> </xsl:text>
+      <xsl:for-each select="$marker[normalize-space()]">
+        <fo:inline>
+          <xsl:value-of select="."/>
+          <xsl:text> </xsl:text>
+        </fo:inline>        
+      </xsl:for-each>
       <xsl:apply-templates/>
       <xsl:if test="following-sibling::tei:item">
         <xsl:text> </xsl:text>
@@ -804,7 +836,7 @@
           <xsl:choose>
             <xsl:when test="tokenize(parent::tei:list/@rend, '\s+') = 'simple'"/>
             <xsl:when test="tokenize(parent::tei:list/@rend, '\s+') = 'ordered'">
-              <xsl:variable name="nr"><xsl:number level="multiple" format="1.1.1.1.1"/></xsl:variable>
+              <xsl:variable name="nr"><xsl:number level="multiple" format="1.1.1.1.1" from="tei:list[not(parent::tei:item/parent::tei:list[tokenize(@rend, '\s+') = 'ordered'])]"/></xsl:variable>
               <xsl:value-of select="$nr"/>
               <xsl:if test="string-length($nr) = 1">
                 <xsl:text>.</xsl:text>
@@ -882,7 +914,11 @@
   </xsl:template>
   
   <xsl:template match="tei:cell">
-    <fo:table-cell xsl:use-attribute-sets="table.properties cell.properties">    
+    <fo:table-cell xsl:use-attribute-sets="table.properties cell.properties">
+      <!-- Colspanning cells should have centred content. -->
+      <xsl:if test="@cols[xs:integer(.) gt 1]">
+        <xsl:attribute name="text-align">center</xsl:attribute>
+      </xsl:if>
       <xsl:for-each select="@cols">
         <xsl:attribute name="number-columns-spanned"><xsl:value-of select="."/></xsl:attribute>
       </xsl:for-each>
@@ -923,6 +959,14 @@
     <xsl:for-each select="$table_with_no_colspans">
       <xsl:apply-templates mode="rowspan" />
     </xsl:for-each>
+  </xsl:template>
+  
+  <!-- Expand <ptr/> during table normalization, in order to include URLs in column width calculation. -->
+  <xsl:template match="tei:ptr" mode="rowspan colspan">
+    <tei:ref>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:value-of select="@target"/>
+    </tei:ref>
   </xsl:template>
   
   <xsl:template match="@*|node()" mode="rowspan colspan">
@@ -989,7 +1033,7 @@
         max(
           for $cell in $current//tei:cell[$pos]
           return max((
-            for $a in tokenize($cell, '\s+') 
+            for $a in tokenize($cell, '[-\s/]+') 
             return string-length($a) div max(($cell/@cols, 1)), 
             for $a in $cell//(tei:figure[1])/tei:graphic return 10
           ))
@@ -1022,18 +1066,22 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="tei:teiHeader/tei:profileDesc/tei:textClass">
-    <fo:block xsl:use-attribute-sets="back.font.properties">
-      <fo:block xsl:use-attribute-sets="heading.properties">
-        <xsl:value-of select="i18n:key('index-label')"/>
-      </fo:block>
-      <fo:block>
-        <fo:inline font-family="Roboto" font-size="9pt" font-weight="bold">
-          <xsl:value-of select="concat(i18n:key('keywords-label'), ': ')"/>
-        </fo:inline>
-        <xsl:value-of select="string-join(tei:keywords/tei:term, ', ')"/>
-      </fo:block>
-    </fo:block>
+  <xsl:template name="index">
+    <xsl:if test="tei:teiHeader/tei:profileDesc/tei:textClass">
+      <fo:block xsl:use-attribute-sets="back.font.properties">
+        <fo:block xsl:use-attribute-sets="heading.properties">
+          <xsl:value-of select="i18n:key('index-label')"/>
+        </fo:block>
+        <xsl:for-each select="tei:teiHeader/tei:profileDesc/tei:textClass">
+          <fo:block>
+            <fo:inline font-family="Roboto,DejaVu" font-size="9pt" font-weight="bold">
+              <xsl:value-of select="concat(i18n:key('keywords-label', (tei:keywords/@xml:lang, $jtei.lang)[1]), ': ')"/>
+            </fo:inline>
+            <xsl:value-of select="string-join(tei:keywords/tei:term, ', ')"/>
+          </fo:block>
+        </xsl:for-each>
+      </fo:block>      
+    </xsl:if>
   </xsl:template>
   
   <xsl:template name="authors">
@@ -1123,15 +1171,6 @@
       <fo:block/>
     </xsl:if>
   </xsl:template>
-  
-  <!-- text() following an element for which smart quotes are being generated: skip starting punctuation (this is pulled into the quotation marks) -->
-  <xsl:template match="text()[matches(., '^\s*[\p{P}-[:;\p{Ps}\p{Pe}—]]')]
-    [preceding-sibling::node()[not(self::tei:note)][1]
-    [. intersect key('quotation.elements', local-name())]]
-    |
-    text()[matches(., '^\s*[\p{P}-[\p{Ps}\p{Pe}]]')]
-    [preceding-sibling::node()[1][self::tei:note]]">
-    <xsl:value-of select="replace(., '^(\s*)[\p{P}-[\p{Ps}\p{Pe}]]+', '$1', 's')"/>
-  </xsl:template>
+
       
 </xsl:stylesheet>

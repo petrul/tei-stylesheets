@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet 
     xmlns:ann="http://relaxng.org/ns/compatibility/annotations/1.0"
- xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-xmlns:cals="http://www.oasis-open.org/specs/tm9901"
-xmlns:tei="http://www.tei-c.org/ns/1.0"
-xmlns:iso="http://www.iso.org/ns/1.0"
-xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:ve="http://schemas.openxmlformats.org/markup-compatibility/2006"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
-xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:fn="http://www.w3.org/2005/02/xpath-functions"
-xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
-xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
-xmlns:w10="urn:schemas-microsoft-com:office:word"
-xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml"
-xmlns:mml="http://www.w3.org/1998/Math/MathML"
-xmlns:tbx="http://www.lisa.org/TBX-Specification.33.0.html"
-xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"
-xmlns:teidocx="http://www.tei-c.org/ns/teidocx/1.0" version="2.0"
+    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:cals="http://www.oasis-open.org/specs/tm9901"
+    xmlns:tei="http://www.tei-c.org/ns/1.0"
+    xmlns:iso="http://www.iso.org/ns/1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ve="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+    xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+    xmlns:v="urn:schemas-microsoft-com:vml"
+    xmlns:fn="http://www.w3.org/2005/02/xpath-functions"
+    xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+    xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+    xmlns:w10="urn:schemas-microsoft-com:office:word"
+    xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml"
+    xmlns:mml="http://www.w3.org/1998/Math/MathML"
+    xmlns:tbx="http://www.lisa.org/TBX-Specification.33.0.html"
+    xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"
+    xmlns:teidocx="http://www.tei-c.org/ns/teidocx/1.0" version="3.0"
     exclude-result-prefixes="#all"
->
+    >
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
     <desc>
-      <p> TEI Utility stylesheet defining functions for use in all
-         output formats.</p>
+      <p>TEI Utility stylesheet defining functions for use in all output formats.</p>
       <p>This software is dual-licensed:
 
 1. Distributed under a Creative Commons Attribution-ShareAlike 3.0
@@ -227,6 +226,7 @@ of this software, even if advised of the possibility of such damage.
     <xsl:param name="element"/>
     <xsl:for-each select="$element">
       <xsl:choose>
+        <xsl:when test="ancestor-or-self::*[@xml:lang][1]/@xml:lang = ('ja','zh','zh-TW','ko')">false</xsl:when>
         <xsl:when test="ancestor-or-self::*[@rend][tei:match(@rend,'italic')]">true</xsl:when>
         <xsl:when test="self::tei:emph">true</xsl:when>
         <xsl:when test="self::tei:hi[not(@rend)]">true</xsl:when>
@@ -298,7 +298,7 @@ of this software, even if advised of the possibility of such damage.
     <xsl:param name="element"/>
     <xsl:for-each select="$element">
       <xsl:choose>
-        <xsl:when test="ancestor-or-self::*[@rend][tei:match(@rend,'sup')]">true</xsl:when>
+        <xsl:when test="ancestor-or-self::*[@rend][tei:match(@rend,'sub')]">true</xsl:when>
         <xsl:when test="ancestor-or-self::*[@rend][tei:match(@rend,'subscript')]">true</xsl:when>
         <xsl:otherwise>false</xsl:otherwise>
       </xsl:choose>
@@ -493,7 +493,7 @@ of this software, even if advised of the possibility of such damage.
       trim trailing space on the last text node in an element,
       trim both if a text node is both first and last, i.e., is the only text node in the element.</desc>
   </doc>
-  <xsl:template match="text()" mode="#default plain">
+  <xsl:template match="text()" mode="#default plain xref">
     <xsl:choose>
       <xsl:when test="ancestor::*[@xml:space][1]/@xml:space='preserve'">
         <xsl:value-of select="tei:escapeChars(.,parent::*)"/>
@@ -596,7 +596,7 @@ of this software, even if advised of the possibility of such damage.
     <desc>[common] give language-specific version of a word or phrase<param name="word">the word(s) to translate</param>
       </desc>
   </doc>
-  <xsl:function name="tei:i18n" as="xs:string">
+  <xsl:function name="tei:i18n" as="xs:string*">
     <xsl:param name="word"/>
     <xsl:variable name="Word">
       <xsl:value-of select="normalize-space($word)"/>
@@ -619,7 +619,7 @@ of this software, even if advised of the possibility of such damage.
               <xsl:value-of select="key('KEYS',$Word)/text[@xml:lang=$documentationLanguage]"/>
             </xsl:when>
             <xsl:when test="key('KEYS',$Word)/text[@lang3=$documentationLanguage]">
-              <xsl:value-of select="key('KEYS',$Word)/text[lang3=$documentationLanguage]"/>
+              <xsl:value-of select="key('KEYS',$Word)/text[@lang3=$documentationLanguage]"/>
             </xsl:when>
             <xsl:otherwise>
               <!--
@@ -1123,21 +1123,28 @@ of this software, even if advised of the possibility of such damage.
       <!-- first the gloss -->
       <xsl:sequence select="tei:makeGloss(.,$langs)"/>
       <!-- now the description -->
+      <!--
+          Change, 2020-02-10 in response to #418:
+          Only look at, count, or copy those <desc> elements that do
+          NOT have a @type of "deprecationInfo". Note that we use
+          not(@type eq 'dI') because using just @type ne 'dI' does not
+          include those <desc>s that do not have @type at all.
+      -->
       <xsl:choose>
-        <xsl:when test="not(tei:desc)"> </xsl:when>
-        <xsl:when test="count(tei:desc)=1">
-          <xsl:for-each select="tei:desc">
+        <xsl:when test="not(tei:desc[ not( @type eq 'deprecationInfo' ) ])"> </xsl:when>
+        <xsl:when test="count(tei:desc[ not( @type eq 'deprecationInfo' ) ])=1">
+          <xsl:for-each select="tei:desc[ not( @type eq 'deprecationInfo' ) ]">
             <xsl:apply-templates select="." mode="inLanguage"/>
           </xsl:for-each>
         </xsl:when>
-        <xsl:when test="tei:desc[@xml:lang=$firstLang]">
-          <xsl:for-each select="tei:desc[@xml:lang=$firstLang]">
+        <xsl:when test="tei:desc[ not( @type eq 'deprecationInfo' ) ][@xml:lang=$firstLang]">
+          <xsl:for-each select="tei:desc[ not( @type eq 'deprecationInfo' ) ][@xml:lang=$firstLang]">
             <xsl:apply-templates select="." mode="inLanguage"/>
           </xsl:for-each>
         </xsl:when>
         <xsl:otherwise>
           <xsl:variable name="D">
-            <xsl:for-each select="tei:desc">
+            <xsl:for-each select="tei:desc[ not( @type eq 'deprecationInfo' ) ]">
               <xsl:variable name="currentLang"   select="tei:findLanguage(.)"/>
               <xsl:if test="$currentLang=($langs)">
                 <xsl:apply-templates select="." mode="inLanguage"/>
@@ -1145,8 +1152,8 @@ of this software, even if advised of the possibility of such damage.
             </xsl:for-each>
           </xsl:variable>
           <xsl:choose>
-            <xsl:when test="$D='' and tei:desc[(not(@xml:lang) or @xml:lang='en')]">
-              <xsl:for-each select="tei:desc[(not(@xml:lang) or @xml:lang='en')]">
+            <xsl:when test="$D='' and tei:desc[ not( @type eq 'deprecationInfo' ) ][(not(@xml:lang) or @xml:lang='en')]">
+              <xsl:for-each select="tei:desc[ not( @type eq 'deprecationInfo' ) ][(not(@xml:lang) or @xml:lang='en')]">
                 <xsl:apply-templates select="." mode="inLanguage"/>
               </xsl:for-each>
             </xsl:when>
@@ -1165,7 +1172,7 @@ of this software, even if advised of the possibility of such damage.
           The original code, which had separate templates for tei:valList[@type=open] and
           tei:valList[@type=semi], was very redundant. However, it may have been very clever
           in how it handled the case of multiple child <valList>s. Or, it may have obliviously
-          worked in that caes, producing passable, if not ideal, outupt. Depends on your point
+          worked in that case, producing passable, if not ideal, output. Depends on your point
           of view, in part.
           I believe we reproduce what it did, whether you like it or not, by using '=' instead
           of 'eq' in the "if" comparison in the definition of $msg.
@@ -1196,10 +1203,14 @@ of this software, even if advised of the possibility of such damage.
               <xsl:value-of select="concat(normalize-space(tei:generateDocumentationLang(.)),' ')"/>
             </xsl:variable>
             <xsl:variable name="firstLang" select="($langs)[1]"/>
-            <xsl:sequence select="tei:makeGloss(.,$langs)"/>
-            <xsl:if test="following-sibling::tei:valItem">
-              <xsl:text>; </xsl:text>
-            </xsl:if>
+            <xsl:variable name="gloss"
+                          select="normalize-space( string-join( tei:makeGloss(.,$langs),'') )"/>
+            <xsl:value-of select="concat(
+                                    if ($gloss ne '') then '&#x20;' else '',
+                                    $gloss,
+                                    if (following-sibling::tei:valItem) then ';' else '',
+                                    if (position() ne last()) then '&#x20;' else ''
+                                    )"/>
           </xsl:for-each>
         </xsl:when>
       </xsl:choose>
@@ -1216,6 +1227,43 @@ of this software, even if advised of the possibility of such damage.
     </xsl:for-each>
   </xsl:variable>
   <xsl:copy-of select="$D"/>
+  </xsl:function>
+  
+  <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
+    <desc>whether there is an out-of-date desc or gloss in the translation language</desc>
+  </doc>
+  <xsl:function name="tei:descOrGlossOutOfDate" as="xs:boolean">
+    <xsl:param name="context"/>
+    <xsl:variable name="lang" select="tei:generateDocumentationLang($context)[1]"/>
+    <!--
+        Coding NOTE: The 4 tests that comprise $test_results currently
+        use “gt” the value operator rather than ‘>’ the general
+        operator. This is because we expect that there will ever only
+        be 1 sibling <gloss> or <desc> that has the same @type and
+        same @xml:lang. But we might be proven wrong, in which case
+        perhaps ‘>’ would have been better. (If you change it, change
+        this comment, too!)
+    -->
+    <xsl:variable name="test_results" as="xs:boolean*">
+      <!-- first test <gloss> children without @type -->
+      <xsl:sequence select="$context/tei:gloss[ not(@type) ][ @xml:lang eq  'en' ]/@versionDate
+                        gt  $context/tei:gloss[ not(@type) ][ @xml:lang eq $lang ]/@versionDate"/>
+      <!-- second test <desc> children without @type -->
+      <xsl:sequence select="$context/tei:desc[ not(@type) ][ @xml:lang eq  'en' ]/@versionDate
+                        gt  $context/tei:desc[ not(@type) ][ @xml:lang eq $lang ]/@versionDate"/>
+      <!-- next test <gloss> children with @type -->
+      <xsl:for-each select="distinct-values( $context/tei:gloss/@type )">
+        <xsl:sequence select="$context/tei:gloss[ @type eq . ][ @xml:lang eq  'en' ]/@versionDate
+                          gt  $context/tei:gloss[ @type eq . ][ @xml:lang eq $lang ]/@versionDate"/>
+      </xsl:for-each>
+      <!-- last test <desc> children with @type -->
+      <xsl:for-each select="distinct-values( $context/tei:desc/@type )">
+        <xsl:sequence select="$context/tei:desc[ @type eq . ][ @xml:lang eq  'en' ]/@versionDate
+                          gt  $context/tei:desc[ @type eq . ][ @xml:lang eq $lang ]/@versionDate"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <!-- if any one of the above is true, then something is amiss, return true. -->
+    <xsl:sequence select="$test_results = true()"/>
   </xsl:function>
 
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
@@ -1246,6 +1294,8 @@ of this software, even if advised of the possibility of such damage.
     <xsl:param name="context"/>
     <xsl:param name="langs"/>
 
+    <!-- This function returns a sequence of strings that may include
+         leading or trailing whitespace. -->
     <xsl:variable name="firstLang" select="($langs)[1]"/>
     <xsl:for-each select="$context">
       <xsl:choose>
@@ -1276,7 +1326,7 @@ of this software, even if advised of the possibility of such damage.
           </xsl:variable>
           <xsl:choose>
             <xsl:when test="$G='' and tei:gloss[(not(@xml:lang) or @xml:lang='en')]">
-              <xsl:text> (</xsl:text>
+              <xsl:text>(</xsl:text>
               <xsl:apply-templates select="tei:gloss[(not(@xml:lang) or @xml:lang='en')]" mode="inLanguage"/>
               <xsl:text>) </xsl:text>
             </xsl:when>
@@ -1292,39 +1342,70 @@ of this software, even if advised of the possibility of such damage.
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
     <desc>which prefix for schematron</desc>
   </doc>
-
+  <!--* tei:generate-nsprefix-schematron($e)
+      * Calculate a namespace prefix for a given element, or fail. *-->
   <xsl:function name="tei:generate-nsprefix-schematron" as="xs:string">
-    <xsl:param name="e"/>
+    <xsl:param name="e" as="element()"/>
     <xsl:for-each select="$e">
-      <xsl:variable name="myns" select="ancestor::tei:elementSpec/@ns"/>
+      <xsl:variable name="myns" select="normalize-space( ancestor::tei:elementSpec/@ns )"/>
+      <xsl:variable name="prefixes" select="in-scope-prefixes(.)" as="xs:string*"/>
+      <xsl:variable name="uris" select="for $pre in $prefixes return namespace-uri-for-prefix( $pre,$e)" as="xs:anyURI*"/>
       <xsl:choose>
-        <xsl:when test="not($myns) or $myns='http://www.tei-c.org/ns/1.0'">
+        <!--* if ns is not specified or is tei, use 'tei'
+            * Note that $myns will be undefined both when the ancestor
+            * <elementSpec> does not have an @ns, and when there is no
+            * ancestor <elementSpec>. *-->
+        <xsl:when test="not($myns)  or  $myns eq 'http://www.tei-c.org/ns/1.0'">
           <xsl:text>tei:</xsl:text>
         </xsl:when>
+        <!--* otherwise, if an ancestor has a suitable <sch:ns> element, 
+            * use the one belonging to the nearest such ancestor *-->
+        <xsl:when test="ancestor::*/sch:ns[ normalize-space(@uri) eq $myns ]">
+          <xsl:variable name="a" as="element()"
+                        select="ancestor::*[sch:ns[ normalize-space(@uri) eq $myns ]][1]"/>
+          <xsl:variable name="prefix" as="xs:string*"
+                        select="$a/sch:ns[ normalize-space(@uri) eq $myns ]/normalize-space(@prefix)"/>
+          <xsl:value-of select="concat( $prefix[1],':')"/>
+        </xsl:when>
+        <!--* Otherwise, if the actual declaration has a suitable
+            * namespace node, use the current prefix. Or, to be
+            * exact, any one of the current non-null prefixes.
+            * We'll take the first one presented.
+            *-->
+        <xsl:when test="$uris = $myns  and  $myns ne ''">
+          <xsl:variable name="indx" select="index-of( $uris, $myns )[1]"/>
+          <xsl:value-of select="concat( $prefixes[$indx],':')"/>
+        </xsl:when>
+        <!--* If no ancestor has a suitable sch:ns child, and we don't
+            * have any local namespace bindings with non-zero
+            * prefixes, then we are desperate and we will take any 
+            * sch:ns in the schemaSpec (this is getting a bit desperate) *-->   
+        <xsl:when test="ancestor::tei:schemaSpec//sch:ns[ normalize-space(@uri) eq $myns ]">
+          <xsl:variable name="NSs" select="ancestor::tei:schemaSpec//sch:ns[ normalize-space(@uri) eq $myns ]"/>
+          <xsl:value-of select="concat($NSs[1]/normalize-space(@prefix),':')"/>
+        </xsl:when>
         <xsl:otherwise>
-          <xsl:choose>
-            <xsl:when test="ancestor::tei:schemaSpec//sch:ns[@uri=$myns]">
-              <xsl:value-of
-                  select="concat(ancestor::tei:schemaSpec//sch:ns[@uri=$myns]/@prefix,':')"/>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:message terminate="yes">schematron rule cannot work out prefix for <xsl:value-of select="ancestor::tei:elementSpec/@ident"/></xsl:message>
-            </xsl:otherwise>
-          </xsl:choose>
+          <xsl:message terminate="yes"
+                       select="concat('schematron rule cannot work out prefix for ', ancestor::tei:elementSpec/@ident, '.')"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>
   </xsl:function>
 
+
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
     <desc>find version of stylesheets</desc>
   </doc>
-
   <xsl:function name="tei:stylesheetVersion" as="xs:string">
-    <xsl:param name="context"/>
     <xsl:choose>
       <xsl:when test="$useFixedDate='true'">0</xsl:when>
-      <xsl:otherwise><xsl:value-of select="normalize-space(unparsed-text('../VERSION'))"/></xsl:otherwise>
+      <xsl:when test="unparsed-text-available('../VERSION')">
+        <xsl:value-of select="normalize-space( unparsed-text('../VERSION') )"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:message>WARNING: Unable to determine Stylesheet’s version number because the file ../VERSION was not found; using “0.0.0”.</xsl:message>
+        <xsl:value-of select="'0.0.0'"/>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
 
@@ -1431,12 +1512,12 @@ of this software, even if advised of the possibility of such damage.
            "xml:id" (or anything else with a colon). Note that the
            value we are generating has to be an XML NCName. The value
            of almost any @ident in the TEI is an XML Name, with two
-           exceptions: prefixDef/@ident (which can contain '+, and can
-           even start with '+', '-', or '.') and valItem/@ident (which
-           can contain *anything*). However, neither <prefixDef> nor
-           <valItem> have <constraintSpec>s, so we don't have to worry
-           about those here. If we did, the clever XSLT 1.0 version of
-           that XPath is
+           exceptions: prefixDef/@ident (which can contain '+', and
+           can even start with '+', '-', or '.') and valItem/@ident
+           (which can contain *anything*). However, neither
+           <prefixDef> nor <valItem> have <constraintSpec>s, so we
+           don't have to worry about those here. If we did, the clever
+           XSLT 1.0 version of that XPath is
              ../ancestor::*[@ident]/@ident/translate( ., translate( .,'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-',''),'')
            That is probably blazingly fast, but (besides being hard to
            read and understand) has the disadvantage that it
@@ -1522,6 +1603,7 @@ of this software, even if advised of the possibility of such damage.
           <xsl:when test="$filesuffix='ogg'">audio/ogg</xsl:when>
           <xsl:when test="$filesuffix='mp3'">audio/mpeg</xsl:when>
           <xsl:when test="$filesuffix='wmf'">image/x-wmf</xsl:when>
+          <xsl:when test="$filesuffix='svg'">image/svg+xml</xsl:when>
           <xsl:otherwise>image/jpeg</xsl:otherwise>
         </xsl:choose>
      </xsl:function>

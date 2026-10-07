@@ -48,7 +48,7 @@
         "type" : "elementSpec",
         "module" : "",
         "desc" : 
-        [ "<desc xmlns=\"http:\/\/www.tei-c.org\/ns\/1.0\">\n            This element encodes a citation according to the foo standard.\n          <\/desc>" ],
+        [ "<desc>\n            This element encodes a citation according to the foo standard.\n          <\/desc>" ],
         "shortDesc" : "\n            This element encodes a citation according to the foo standard.\n          ",
         "gloss" : 
         [  ],
@@ -80,8 +80,8 @@
             "datatype" : 
             { "min" : "1",
               "max" : "1",
-              "dataRef" : 
-              {  } } },
+              "type" : "rng",
+              "rngContent" : "<rng:text xmlns=\"http:\/\/www.tei-c.org\/ns\/1.0\" xmlns:rng=\"http:\/\/relaxng.org\/ns\/structure\/1.0\"\/>" } },
           
           { "onElement" : true,
             "ident" : "r",
@@ -100,15 +100,18 @@
             "datatype" : 
             { "min" : "1",
               "max" : "1",
-              "dataRef" : 
-              {  } } } ],
+              "type" : "rng",
+              "rngContent" : "<rng:text xmlns=\"http:\/\/www.tei-c.org\/ns\/1.0\" xmlns:rng=\"http:\/\/relaxng.org\/ns\/structure\/1.0\"\/>" } } ],
         "content" : 
         [ 
-          { "type" : "ref" },
+          { "type" : "rng",
+            "rngContent" : "<rng:ref xmlns=\"http:\/\/www.tei-c.org\/ns\/1.0\" xmlns:rng=\"http:\/\/relaxng.org\/ns\/structure\/1.0\" name=\"ref\"\/>" },
           
-          { "type" : "oneOrMore" },
+          { "type" : "rng",
+            "rngContent" : "<rng:oneOrMore xmlns=\"http:\/\/www.tei-c.org\/ns\/1.0\" xmlns:rng=\"http:\/\/relaxng.org\/ns\/structure\/1.0\">\n              <rng:ref name=\"macro.specialPara\"\/>\n            <\/rng:oneOrMore>" },
           
-          { "type" : "text" } ] } ],
+          { "type" : "rng",
+            "rngContent" : "<rng:text xmlns=\"http:\/\/www.tei-c.org\/ns\/1.0\" xmlns:rng=\"http:\/\/relaxng.org\/ns\/structure\/1.0\"\/>" } ] } ],
     "classes" : 
     { "models" : 
       [  ],

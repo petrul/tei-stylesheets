@@ -4,7 +4,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns="http://www.w3.org/1999/xhtml"
                 exclude-result-prefixes="tei"
-                version="2.0">
+                version="3.0">
    <xsl:import href="isoutils.xsl"/>
    <xsl:import href="html/to.xsl"/>
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
@@ -50,7 +50,8 @@ of this software, even if advised of the possibility of such damage.
 
 
 
-   <xsl:output method="xhtml" encoding="utf-8"/>
+   <xsl:output method="xhtml" html-version="5.0" encoding="UTF-8" indent="yes" normalization-form="NFC"
+      omit-xml-declaration="yes"/>
 
 
    <xsl:key name="DIV" match="tei:div" use="@type"/>

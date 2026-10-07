@@ -9,8 +9,9 @@
     xmlns:xlink="http://www.w3.org/1999/xlink" 
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sch= "http://purl.oclc.org/dsdl/schematron"
     exclude-result-prefixes="#all"
-    version="2.0">
+    version="3.0">
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Jan 2, 2017</xd:p>
@@ -30,6 +31,14 @@
                    
                 4. Remove any timestamps that are generated during processing, since
                    these will be different each time a test is run.
+
+                5. Replace the value of the @version attribute of any &lt;application>
+                   elements that have “tei” (case insensitive) in either their @xml:id
+                   or @ident attribute with a dummy value (per issue #646).
+                   
+                6. Remove all ids on Schematron pattern elements, since these end up 
+                   with numeric suffixes guaranteed to change with any change to the 
+                   number of such patterns, where the numbering itself has no meaning.
             </xd:p>
         </xd:desc>
     </xd:doc>
@@ -41,7 +50,7 @@
     <xsl:key name="IDS" use="@id" match="*"/>
     
 <!--  Checking of internal links in HTML documents.  -->
-    <xsl:template match="xhtml:a[starts-with(@href,'#')]">
+    <xsl:template match="xhtml:html/descendant::xhtml:a[starts-with(@href,'#')]">
         <xsl:if test="not(key('IDS',substring(@href,2)))">
             <xsl:message terminate="yes">Error: no target for link <xsl:value-of select="@href"/></xsl:message>
         </xsl:if>
@@ -64,7 +73,27 @@
             <xsl:copy-of select="@*"/>
         </xsl:copy>
     </xsl:template>
+
+<!--  And versions from <application>s we (probably) inserted. -->
+    <xsl:template match="tei:application[ matches( string-join( ( @xml:id, '␝', @ident ) ), 'tei', 'i') ]">
+        <!-- Note that any character legal in an XML attribute could
+             be used to separate the @xml:id from the @ident, above,
+             EXCEPT one of ‘t’, ‘T’, ‘e’, ‘E’, ‘i’, or ‘I’. -->
+        <xsl:copy>
+            <xsl:copy-of select="@* except @version"/>
+            <xsl:attribute name="version" select="'9thisisaplaceholder88.777soisthis6666.55555thistoo4444.333lastone22'"/>
+            <xsl:apply-templates select="node()"/>
+        </xsl:copy>
+    </xsl:template>
     
+<!-- Remove ids from Schematron patterns. -->
+    <xsl:template match="sch:pattern[@id]">
+        <xsl:copy>
+            <xsl:apply-templates select="@* except @id"/>
+            <xsl:apply-templates select="node()"/>
+        </xsl:copy>
+    </xsl:template>
+
 <!--  Default identity transform.  -->
     <xsl:template match="@* | node()" priority="-1" mode="#all">
         <xsl:copy>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="2.0" 
+<xsl:stylesheet version="3.0" 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xpath-default-namespace="http://www.tei-c.org/ns/1.0"
 	xmlns="http://www.tei-c.org/ns/1.0"
@@ -15,7 +15,7 @@
       
   -->
   <!-- where is a copy of P5? -->
-  <xsl:param name="defaultSource">http://www.tei-c.org/Vault/P5/current/xml/tei/odd/p5subset.xml</xsl:param>
+  <xsl:param name="defaultSource">https://www.tei-c.org/Vault/P5/current/xml/tei/odd/p5subset.xml</xsl:param>
   
   <!-- do you want moduleRef generated with @include or @except? -->
   <xsl:param name="method">include</xsl:param>

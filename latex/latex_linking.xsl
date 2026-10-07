@@ -6,7 +6,7 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"                
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 exclude-result-prefixes="a rng tei teix xs"
-                version="2.0">
+                version="3.0">
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
       <desc>
          <p> TEI stylesheet dealing with elements from the linking module,
@@ -143,6 +143,13 @@ of this software, even if advised of the possibility of such damage.
 		       <xsl:value-of select="@xml:id"/>
 		       <xsl:text>}</xsl:text>
 		     </xsl:when>
+		      <!-- Check whether the current ptr is a reference to a bibliographic object 
+		          and use \cite rather than \hyperref -->
+		      <xsl:when test="self::tei:biblStruct[ancestor::tei:div/@xml:id='BIB']">
+		         <xsl:text>\cite{</xsl:text>
+		         <xsl:value-of select="$dest"/>
+		         <xsl:text>}</xsl:text>
+		      </xsl:when>
 		     <xsl:when test="starts-with(local-name(.),'div')">
 		       <xsl:text>\textit{\hyperref[</xsl:text>
 		       <xsl:value-of select="$dest"/>

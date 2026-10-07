@@ -4,7 +4,7 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.tei-c.org/ns/1.0"
-    version="2.0" exclude-result-prefixes="xs">
+    version="3.0" exclude-result-prefixes="xs">
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
       <desc>
 
@@ -859,7 +859,7 @@ of this software, even if advised of the possibility of such damage.
       <xsl:if test="@first"><xsl:text>  Main hand : </xsl:text><xsl:value-of select="@first"/></xsl:if>
       <xsl:if test="@mainLang"><xsl:text> Main language: </xsl:text><xsl:value-of select="@mainLang"/>
       </xsl:if>
-      <xsl:if test="@resp"><xsl:text>  Responsibiity: </xsl:text><xsl:value-of select="@resp"/></xsl:if>
+      <xsl:if test="@resp"><xsl:text>  Responsibility: </xsl:text><xsl:value-of select="@resp"/></xsl:if>
       
     </handNote>
   </xsl:template>

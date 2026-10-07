@@ -3,7 +3,7 @@
     xpath-default-namespace="http://docbook.org/ns/docbook"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:tei="http://www.tei-c.org/ns/1.0"
-    version="2.0">
+    version="3.0">
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
       <desc>
          <p>This software is dual-licensed:
@@ -324,7 +324,7 @@ of this software, even if advised of the possibility of such damage.
 </xsl:template>
 
 <xsl:template match="itemizedlist">
-  <list  type="unordered">
+  <list rend="bulleted">
     <xsl:apply-templates/>
   </list>
 </xsl:template>
@@ -369,7 +369,7 @@ of this software, even if advised of the possibility of such damage.
 </xsl:template>
 
 <xsl:template match="orderedlist">
-  <list  type="ordered">
+  <list rend="numbered">
     <xsl:apply-templates/>
   </list>
 </xsl:template>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:cals="http://www.oasis-open.org/specs/tm9901" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:prop="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:iso="http://www.iso.org/ns/1.0" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:mo="http://schemas.microsoft.com/office/mac/office/2008/main" xmlns:mv="urn:schemas-microsoft-com:mac:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:tbx="http://www.lisa.org/TBX-Specification.33.0.html" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:teidocx="http://www.tei-c.org/ns/teidocx/1.0" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:ve="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns="http://www.tei-c.org/ns/1.0" version="2.0" exclude-result-prefixes="#all">
+<xsl:stylesheet xmlns:cals="http://www.oasis-open.org/specs/tm9901" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:prop="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:iso="http://www.iso.org/ns/1.0" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:mo="http://schemas.microsoft.com/office/mac/office/2008/main" xmlns:mv="urn:schemas-microsoft-com:mac:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:tbx="http://www.lisa.org/TBX-Specification.33.0.html" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:teidocx="http://www.tei-c.org/ns/teidocx/1.0" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:ve="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns="http://www.tei-c.org/ns/1.0" version="3.0" exclude-result-prefixes="#all">
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
     <desc>
       <p> TEI stylesheet for converting Word docx files to TEI </p>
@@ -86,11 +86,27 @@ of this software, even if advised of the possibility of such damage.
       <p>zap empty p</p>
     </desc>
   </doc>
-  <xsl:template match="tei:p[not(.//tei:pb) and       normalize-space(.)='']" mode="pass2"		priority="99"/>
-  <xsl:template match="tei:figure/tei:p[tei:graphic and count(*)=1]" mode="pass2" priority="101">
-    <xsl:apply-templates mode="pass2"/>
+  <xsl:template match="tei:p[not(.//tei:pb) and normalize-space(.)='']" mode="pass2"		priority="99"/>
+  
+  <xsl:template match="tei:figure/tei:p[.//tei:graphic]" mode="pass2" priority="101">
+    <xsl:choose>
+      <xsl:when test="preceding-sibling::tei:p[.//tei:graphic]">
+        <figure>
+          <xsl:apply-templates select="*" mode="pass2"/>
+        </figure>
+      </xsl:when>
+      <xsl:when test="following-sibling::tei:p[.//tei:graphic]">
+        <figure>
+          <xsl:apply-templates select="*" mode="pass2"/>
+        </figure>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="*" mode="pass2"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    
   </xsl:template>
-
+    
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
     <desc>Singleton paragraphs in cells dropped</desc>
   </doc>
@@ -327,7 +343,15 @@ of this software, even if advised of the possibility of such damage.
       </xsl:when>
       <xsl:when test="parent::tei:head and .=' '"/>
       <xsl:when test="parent::tei:item/parent::tei:list[@type='gloss']  and tei:g[@ref='x:tab']"/>
-      <xsl:when test="preceding-sibling::node()[1][self::tei:hi[concat(@rend,@style)=$r]]"/>
+      
+      <!-- 
+           The following when statements make sure that tei:hi with the same @rend and @style are merged
+           together. We assume that the first tei:hi with text data will be processed and will pull in
+           text data from immediately following tei:hi elements. Therefore, tei:hi elements with a preceding
+           tei:hi with the same @rend and @style will *not* be processed.
+      -->
+      
+      <xsl:when test="preceding-sibling::node()[1][self::tei:hi[concat(@rend,@style)=$r][* or text()]]"/>
       <xsl:when test="preceding-sibling::node()[1][self::tei:seg and .=' ']   and  preceding-sibling::node()[2][self::tei:hi[concat(@rend,@style)=$r]]"/>
       <xsl:when test="($r='bold' or $r='italic') and .=' '">
         <xsl:text> </xsl:text>
@@ -436,35 +460,94 @@ of this software, even if advised of the possibility of such damage.
   </xsl:template>
 
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
-    <desc> &lt;CAPTION&gt; belongs to nearest figure or table</desc>
+    <desc> &lt;CAPTION&gt; belongs to nearest figure or table. Tables with multi-paragraph preceding
+          CAPTIONs or with following captions are wrapped in a figure and the first para becomes a &lt;head&gt;,
+          while subsequent ones become &lt;figDescs&gt;. A single preceding CAPTION paragraph becomes an 
+          internal header. Figure captions become headers and figDescs in a similar way.</desc>
   </doc>
   <xsl:template match="tei:CAPTION" mode="pass2"/>
-  <xsl:template match="tei:table|tei:figure" mode="pass2">
-    <xsl:copy>
-      <xsl:apply-templates select="@*" mode="pass2"/>
-      <xsl:apply-templates mode="pass2"/>
-      <xsl:if test="preceding-sibling::*[1][self::tei:CAPTION] and 
-        following-sibling::*[1][self::tei:CAPTION]">
-        <xsl:message>
-          <xsl:text>WARN: Possible confusion on where these captions belong: [[</xsl:text>
-          <xsl:value-of select="concat(preceding-sibling::*[1],']] and [[',
-            following-sibling::*[1],']]')"/>
-        </xsl:message>
-      </xsl:if>
-      <xsl:choose>
-        <xsl:when test="following-sibling::*[1][self::tei:CAPTION]">
-          <xsl:apply-templates
-            select="following-sibling::*[1][self::tei:CAPTION]/*" mode="pass2"/>
-        </xsl:when>
-        <xsl:when test="preceding-sibling::*[1][self::tei:CAPTION]">
-          <xsl:apply-templates
-            select="preceding-sibling::*[1][self::tei:CAPTION]/*" mode="pass2"/>
-        </xsl:when>
-      </xsl:choose>
-    </xsl:copy>
+  
+  <xsl:template match="tei:table" mode="pass2">
+    <xsl:variable name="preceding-caption" select="preceding-sibling::*[1][self::tei:CAPTION][string-length(string-join(.//text(), '')) gt 0]"/>
+    <xsl:variable name="following-caption" select="following-sibling::*[1][self::tei:CAPTION][string-length(string-join(.//text(), '')) gt 0]"/>
+    <xsl:if test="preceding-sibling::*[1][self::tei:CAPTION] and 
+      following-sibling::*[1][self::tei:CAPTION]">
+      <xsl:message>
+        <xsl:text>WARN: Possible confusion on where these captions belong: [[</xsl:text>
+        <xsl:value-of select="concat(preceding-sibling::*[1],']] and [[',
+          following-sibling::*[1],']]')"/>
+      </xsl:message>
+    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="$preceding-caption[count(tei:p) gt 1] or $following-caption">
+        <figure>
+          <xsl:if test="$preceding-caption">
+            <head>
+              <xsl:apply-templates select="$preceding-caption/tei:p[1]/node()" mode="pass2"/>
+            </head>
+          </xsl:if>
+          <xsl:for-each select="$preceding-caption/tei:p[position() gt 1]">
+            <p>
+              <xsl:apply-templates select="@*" mode="pass2"/>
+              <xsl:apply-templates mode="pass2"/>
+            </p>
+          </xsl:for-each>
+          <xsl:copy>
+            <xsl:apply-templates select="@*" mode="pass2"/>
+            <xsl:apply-templates mode="pass2"/>
+          </xsl:copy>
+          <xsl:for-each select="$following-caption/tei:p">
+            <head>
+              <xsl:apply-templates mode="pass2"/>
+            </head>
+          </xsl:for-each>
+        </figure>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy>
+          <xsl:apply-templates select="@*" mode="pass2"/>
+          <xsl:if test="count($preceding-caption/tei:p) = 1">
+            <head>
+              <xsl:apply-templates select="$preceding-caption/tei:p/node()" mode="pass2"/>
+            </head>
+          </xsl:if>
+          <xsl:apply-templates mode="pass2"/>
+        </xsl:copy>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
-  
+  <xsl:template match="tei:figure" mode="pass2">
+    <xsl:variable name="preceding-caption" select="preceding-sibling::*[1][self::tei:CAPTION][string-length(string-join(.//text(), '')) gt 0]"/>
+    <xsl:variable name="following-caption" select="following-sibling::*[1][self::tei:CAPTION][string-length(string-join(.//text(), '')) gt 0]"/>
+    <xsl:if test="preceding-sibling::*[1][self::tei:CAPTION] and 
+      following-sibling::*[1][self::tei:CAPTION]">
+      <xsl:message>
+        <xsl:text>WARN: Possible confusion on where these captions belong: [[</xsl:text>
+        <xsl:value-of select="concat(preceding-sibling::*[1],']] and [[',
+          following-sibling::*[1],']]')"/>
+      </xsl:message>
+    </xsl:if>
+    <xsl:copy>
+      <xsl:if test="$preceding-caption">
+        <head>
+          <xsl:apply-templates select="$preceding-caption/tei:p[1]/node()" mode="pass2"/>
+        </head>
+      </xsl:if>
+      <xsl:for-each select="$preceding-caption/tei:p[position() gt 1]">
+        <p>
+          <xsl:apply-templates mode="pass2"/>
+        </p>
+      </xsl:for-each>
+      <xsl:apply-templates select="@*" mode="pass2"/>
+      <xsl:apply-templates mode="pass2"/>
+      <xsl:for-each select="$following-caption/tei:p">
+        <head>
+          <xsl:apply-templates mode="pass2"/>
+        </head>
+      </xsl:for-each>
+    </xsl:copy>
+  </xsl:template>
 
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
     <desc>Rename &lt;p&gt; to a more specific name based on @rend</desc>
@@ -598,16 +681,7 @@ of this software, even if advised of the possibility of such damage.
 	<xsl:processing-instruction name="biblio">
 	  <xsl:value-of select="$target"/>
 	</xsl:processing-instruction>
-	<xsl:choose>
-          <xsl:when test="count(text()) &lt; 2">
-            <xsl:apply-templates mode="pass2"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="text()[1]"/>
-            <xsl:apply-templates select="*" mode="pass2"/>
-            <xsl:value-of select="remove(text(), 1)"/>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:apply-templates mode="pass2"/>
       </xsl:when>
       <xsl:when test="matches(@target,'^LINK Excel.Sheet.')">
 	<xsl:sequence select="tei:docxError('cannot embed Excel  spreadsheet')"/>

@@ -6,7 +6,7 @@
                 
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 exclude-result-prefixes="a rng tei teix"
-                version="2.0">
+                version="3.0">
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
       <desc>
          <p> TEI stylesheet dealing with elements from the core module, making
@@ -335,9 +335,25 @@ of this software, even if advised of the possibility of such damage.
       <desc>Process element ident</desc>
    </doc>
   <xsl:template match="tei:ident">
-      <xsl:text>\textsf{</xsl:text>
-      <xsl:apply-templates/>
-      <xsl:text>}</xsl:text>
+    <xsl:text>\textsf{</xsl:text>
+    <xsl:choose>
+      <xsl:when test="@type = ('datatype', 'macro')">
+        <xsl:call-template name="makeInternalLink">
+          <xsl:with-param name="dest" select="text()"/>
+          <xsl:with-param name="body" select="text()"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@type eq 'class'">
+        <xsl:call-template name="makeInternalLink">
+          <xsl:with-param name="dest" select="'TEI.'||text()"/>
+          <xsl:with-param name="body" select="text()"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>}</xsl:text>
   </xsl:template>
 
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
@@ -438,7 +454,7 @@ of this software, even if advised of the possibility of such damage.
 			     |  tei:*/tei:editor//tei:surname
 			     |  tei:*/tei:editor/tei:name
 			     |  tei:*/tei:title)[1])"/>
-	   <xsl:sort select="tei:monogr/tei:imprint/tei:date"/>
+	   <xsl:sort select="head(tei:monogr/tei:imprint/tei:date)"/>
 	   <xsl:text>&#10;\bibitem[</xsl:text>
 	   <xsl:apply-templates select="." mode="xref"/>
 	   <xsl:text>]{</xsl:text>
@@ -464,7 +480,9 @@ of this software, even if advised of the possibility of such damage.
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
       <desc>Process element listBibl/tei:bibl</desc>
    </doc>
-  <xsl:template match="tei:listBibl/tei:bibl"> \bibitem {<xsl:choose>
+  <xsl:template match="tei:listBibl/tei:bibl">
+      <xsl:text> \bibitem {</xsl:text>
+      <xsl:choose>
          <xsl:when test="@xml:id">
 	           <xsl:value-of select="@xml:id"/>
          </xsl:when>
@@ -472,7 +490,6 @@ of this software, even if advised of the possibility of such damage.
          </xsl:otherwise>
       </xsl:choose>
       <xsl:text>}</xsl:text>
-      <xsl:sequence select="tei:makeHyperTarget(@xml:id)"/>
       <xsl:choose>
          <xsl:when test="parent::tei:listBibl/@xml:lang='zh-TW' or @xml:lang='zh-TW'">
 	           <xsl:text>{\textChinese </xsl:text>
@@ -484,6 +501,11 @@ of this software, even if advised of the possibility of such damage.
 	           <xsl:apply-templates/>
 	           <xsl:text>}</xsl:text>
          </xsl:when>
+          <xsl:when test="parent::tei:listBibl/@xml:lang='ko' or @xml:lang='ko'">
+              <xsl:text>{\textKorean </xsl:text>
+              <xsl:apply-templates/>
+              <xsl:text>}</xsl:text>
+          </xsl:when>
          <xsl:otherwise>
             <xsl:apply-templates/>
          </xsl:otherwise>

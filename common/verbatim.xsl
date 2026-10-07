@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:i="http://www.iso.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:s="http://www.ascc.net/xml/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:teix="http://www.tei-c.org/ns/Examples" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:dbk="http://docbook.org/ns/docbook" exclude-result-prefixes="a fo html i rng s sch tei teix xi xs xsl         m atom xlink xhtml dbk" version="2.0">
+<xsl:stylesheet
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:i="http://www.iso.org/ns/1.0"
+    xmlns:rng="http://relaxng.org/ns/structure/1.0"
+    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+    xmlns:tei="http://www.tei-c.org/ns/1.0"
+    xmlns:teix="http://www.tei-c.org/ns/Examples"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    xmlns:dbk="http://docbook.org/ns/docbook"
+    exclude-result-prefixes="a fo html i rng sch tei teix xi xs xsl m atom xlink xhtml dbk"
+    version="3.0">
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
     <desc>
       <p> TEI stylesheet dealing with elements from the core module. </p>
@@ -69,10 +87,10 @@ of this software, even if advised of the possibility of such damage.
       <xsl:when test="$ns='http://earth.google.com/kml/2.1'">kml</xsl:when>
       <xsl:when test="$ns='http://purl.oclc.org/dsdl/nvdl/ns/structure/1.0'">nvdl</xsl:when>
       <xsl:when test="$ns='http://purl.org/rss/1.0/modules/event/'">ev</xsl:when>
-      <xsl:when test="$ns='http://purl.oclc.org/dsdl/schematron'">s</xsl:when>
+      <xsl:when test="$ns='http://purl.oclc.org/dsdl/schematron'">sch</xsl:when>
+      <xsl:when test="$ns='http://www.ascc.net/xml/schematron'">sch_1.x</xsl:when>
       <xsl:when test="$ns='http://relaxng.org/ns/compatibility/annotations/1.0'">a</xsl:when>
       <xsl:when test="$ns='http://relaxng.org/ns/structure/1.0'">rng</xsl:when>
-      <xsl:when test="$ns='http://www.ascc.net/xml/schematron'">sch</xsl:when>
       <xsl:when test="$ns='http://www.w3.org/1998/Math/MathML'">m</xsl:when>
       <xsl:when test="$ns='http://www.w3.org/1999/XSL/Transform'">xsl</xsl:when>
       <xsl:when test="$ns='http://www.w3.org/1999/xhtml'">xhtml</xsl:when>
@@ -425,7 +443,7 @@ of this software, even if advised of the possibility of such damage.
         </xsl:call-template>
         <xsl:call-template name="verbatim-makeIndent"/>
       </xsl:when>
-      <xsl:when test="preceding-sibling::node()[1]/self::text()"> </xsl:when>
+      <xsl:when test="preceding-sibling::node()[1]/self::text()">&#x20;</xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="verbatim-lineBreak">
           <xsl:with-param name="id">9</xsl:with-param>
@@ -446,6 +464,9 @@ of this software, even if advised of the possibility of such damage.
         test="(local-name(.) = 'TEI' and not(local-name(parent::*) = 'teiCorpus')) or local-name(.) = 'teiCorpus'">
         <xsl:text> xmlns="http://www.tei-c.org/ns/1.0"</xsl:text>
       </xsl:if>
+      <xsl:if test="local-name(.) eq 'egXML'">
+	<xsl:text> xmlns="http://www.tei-c.org/ns/Examples"</xsl:text>
+      </xsl:if>
       <xsl:if test="$showNamespaceDecls = 'true' or parent::teix:egXML[tei:match(@rend, 'full')]">
         <xsl:choose>
           <xsl:when test="not(parent::*)">
@@ -465,11 +486,27 @@ of this software, even if advised of the possibility of such damage.
             <xsl:text>&gt;</xsl:text>
           </xsl:with-param>
         </xsl:call-template>
-        <xsl:apply-templates mode="verbatim">
-          <xsl:with-param name="highlight">
-            <xsl:value-of select="$highlight"/>
-          </xsl:with-param>
-        </xsl:apply-templates>
+	<xsl:choose>
+	  <!-- 
+	       If we are generating the woven Schematron for a tagdoc page,
+	       ignore comments. (Per Stylesheets #746.)
+	  -->
+	  <xsl:when test="ancestor::sch:*|ancestor::tei:constraintSpec[@scheme eq 'schematron']">
+	    <xsl:apply-templates select="comment()"/>
+	    <xsl:apply-templates select="node() except comment()" mode="verbatim">
+	      <xsl:with-param name="highlight">
+		<xsl:value-of select="$highlight"/>
+	      </xsl:with-param>
+	    </xsl:apply-templates>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:apply-templates mode="verbatim">
+	      <xsl:with-param name="highlight">
+		<xsl:value-of select="$highlight"/>
+	      </xsl:with-param>
+	    </xsl:apply-templates>
+	  </xsl:otherwise>
+	</xsl:choose>
         <xsl:choose>
           <xsl:when test="ancestor::*[@xml:space][1]/@xml:space = 'preserve'"/>
           <xsl:when test="child::node()[last()]/self::text()[normalize-space(.) = '']">

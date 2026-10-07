@@ -1,5 +1,4 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:html="http://www.w3.org/1999/xhtml">
-
    <teiHeader>
       <fileDesc>
          <titleStmt>
@@ -19,7 +18,7 @@
          <div>
             <head>HTML5 Elements</head>
             <p>This is the global <eg>&lt;header&gt;</eg> element for this page, including the <eg>&lt;hgroup&gt;</eg> and <eg>&lt;nav&gt;</eg> elements.</p>
-            <list type="unordered">
+            <list rend="bulleted">
                <item>
                   <ref target="#">Global <eg>&lt;nav&gt;</eg> link within the <eg>&lt;header&gt;</eg>
                   </ref>
@@ -38,13 +37,13 @@
                <div>
                   <head>Article header</head>
                   <p>
-                     <ref target="http://www.ackernaut.com/space-station/zip/html5-elements.zip">Download the HTML and asset files</ref> 
+                     <ref target="http://www.ackernaut.com/space-station/zip/html5-elements.zip">Download the HTML and asset files</ref>
                      <lb/>
           (ZIP does not include audio or video to reduce file size. <lb/>
           You can download them from this page using your browser.)</p>
                   <div>
                      <head>Purpose of this document:</head>
-                     <list type="unordered">
+                     <list rend="bulleted">
                         <item>Includes all the HTML5 elements as listed in the side column. </item>
                         <item>Minimal styling has been used. Use this document to test CSS files (base, reset, custom, etc.) on desired elements in various browsers.</item>
                         <item>Use this document to create comprehensive templates that need to use many of the common HTML5 elements.</item>
@@ -62,34 +61,34 @@
          </div>
          <div>
             <head>Header 1 &lt;h1&gt;</head>
-            <p>This is an example paragrah used within this article for this document.</p>
+            <p>This is an example paragraph used within this article for this document.</p>
             <div>
                <head>Header 2 &lt;h2&gt;</head>
-               <p>This is an example paragrah used within this article for this document.</p>
+               <p>This is an example paragraph used within this article for this document.</p>
                <div>
                   <head>Header 3 &lt;h3&gt;</head>
-                  <p>This is an example paragrah used within this article for this document.</p>
+                  <p>This is an example paragraph used within this article for this document.</p>
                   <div>
                      <head>Header 1 &lt;h4&gt;</head>
-                     <p>This is an example paragrah used within this article for this document.</p>
+                     <p>This is an example paragraph used within this article for this document.</p>
                      <div>
                         <head>Header &lt;h5&gt;</head>
-                        <p>This is an example paragrah used within this article for this document.</p>
+                        <p>This is an example paragraph used within this article for this document.</p>
                         <div>
                            <head>Header &lt;h6&gt;</head>
-                           <p>This is an example paragrah used within this article for this document.</p>
+                           <p>This is an example paragraph used within this article for this document.</p>
                         </div>
                      </div>
                   </div>
                   <div>
                      <head>Unordered list</head>
-                     <list type="unordered">
+                     <list rend="bulleted">
                         <item>Unordered list item</item>
                         <item>Unordered list item
-            <list type="unordered">
+            <list rend="bulleted">
                               <item>Unordered list item</item>
                               <item>Unordered list item
-                <list type="unordered">
+                <list rend="bulleted">
                                     <item>Unordered list item</item>
                                     <item>Unordered list item</item>
                                     <item>Unordered list item</item>
@@ -103,13 +102,13 @@
                   </div>
                   <div>
                      <head>Ordered list</head>
-                     <list type="ordered">
+                     <list rend="numbered">
                         <item>Ordered list item</item>
                         <item>Ordered list item
-            <list type="ordered">
+            <list rend="numbered">
                               <item>Ordered list item</item>
                               <item>Ordered list item
-                <list type="ordered">
+                <list rend="numbered">
                                     <item>Ordered list item</item>
                                     <item>Ordered list item</item>
                                     <item>Ordered list item</item>
@@ -201,27 +200,21 @@
                   <div>
                      <head>Table:</head>
                      <table>
-          
                         <row role="label">
                            <cell>Table header</cell>
                            <cell>Table header</cell>
                            <cell>Table header</cell>
                         </row>
-          
-          
                         <row>
                            <cell>Table footer</cell>
                            <cell>Table footer</cell>
                            <cell>Table footer</cell>
                         </row>
-          
-          
                         <row>
                            <cell>Table data</cell>
                            <cell>Table data</cell>
                            <cell>Table data</cell>
                         </row>
-          
                      </table>
                   </div>
                   <div>
@@ -232,7 +225,7 @@
                   <div>
                      <head>Details and summary:</head>
                      <p>Details: Here is information and links related to / referenced within this article. This uses the <eg>&lt;details&gt;</eg> and <eg>&lt;summary&gt;</eg> elements.</p>
-                     <list type="unordered">
+                     <list rend="bulleted">
                         <item>
                            <ref target="http://html5doctor.com/glossary/">HTML5doctor: HTML5 Glossary</ref>
                         </item>
@@ -248,12 +241,12 @@
                            <ref target="http://flesler.blogspot.com/2007/10/jquerylocalscroll-10.html">jQuery.LocalScroll</ref> by Ariel Flesler</item>
                         <item>See source code for HTML and CSS for other references to stylesheet inspiration etc.</item>
                         <item>What's next? You need to check out these:
-              <list type="unordered">
-                              <item> 
+              <list rend="bulleted">
+                              <item>
                                  <ref target="http://diveintohtml5.org/">Dive into HTML5</ref>
                               </item>
-                              <item> 
-                                 <ref target="http://html5demos.com/">HTML 5 Demos and Examples</ref> 
+                              <item>
+                                 <ref target="http://html5demos.com/">HTML 5 Demos and Examples</ref>
                               </item>
                            </list>
                         </item>
@@ -270,7 +263,7 @@
                         <ref target="#">View / hide</ref> list of elements</p>
                      <p>
                         <hi>Note:</hi> Some elements are only used within the source code and not as examples.</p>
-                     <list type="unordered">
+                     <list rend="bulleted">
                         <item>
                            <eg>&lt;!-- Comments --&gt;</eg>
                         </item>
@@ -505,7 +498,7 @@
                      <head>Elements not included in this demo:</head>
                      <p>
                         <ref target="#">View / hide</ref> list of elements</p>
-                     <list type="unordered">
+                     <list rend="bulleted">
                         <item>
                            <eg>&lt;area&gt;</eg>
                         </item>
@@ -584,7 +577,7 @@
                      <head>Elements not supported by HTML5:</head>
                      <p>
                         <ref target="#">View / hide</ref> list of elements</p>
-                     <list type="unordered">
+                     <list rend="bulleted">
                         <item>
                            <eg>&lt;acronym&gt;</eg>
                         </item>
@@ -632,7 +625,7 @@
                         </item>
                      </list>
                      <p>This is the global <eg>&lt;footer&gt;</eg> for this page/site.</p>
-                     <list type="unordered">
+                     <list rend="bulleted">
                         <item>
                            <ref target="#">Global footer <eg>&lt;nav&gt;</eg> link</ref>
                         </item>

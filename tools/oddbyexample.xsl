@@ -10,7 +10,7 @@
   xmlns:n="www.example.com" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns="http://www.tei-c.org/ns/1.0"
   exclude-result-prefixes="rng tei n"
-  xpath-default-namespace="http://www.tei-c.org/ns/1.0" version="2.0">
+  xpath-default-namespace="http://www.tei-c.org/ns/1.0" version="3.0">
   <!--
 This software is dual-licensed:
 
@@ -88,7 +88,7 @@ valList
   <xsl:param name="includeHeader">true</xsl:param>
   <!-- the source of the TEI (just needs *Spec)-->
   <xsl:param name="defaultSource"
-    >http://www.tei-c.org/Vault/P5/current/xml/tei/odd/p5subset.xml</xsl:param>
+    >https://www.tei-c.org/Vault/P5/current/xml/tei/odd/p5subset.xml</xsl:param>
   <!-- should we make valList for @rend and @rendition -->
   <xsl:param name="enumerateRend">false</xsl:param>
   <!-- should we make valList for @type -->
@@ -636,7 +636,7 @@ valList
           >true</xsl:when>
         <xsl:when test="@ident='type' and $enumerateType='true'">true</xsl:when>
         <xsl:when test="valList[@type='closed']">true</xsl:when>
-        <xsl:when test="datatype/rng:ref[@name='data.enumerated']"
+        <xsl:when test="datatype/dataRef[@key='teidata.enumerated']"
           >true</xsl:when>
         <!--
       <xsl:when

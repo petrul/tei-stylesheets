@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:teix="http://www.tei-c.org/ns/Examples"
-                xmlns:xi="http://www.w3.org/2001/XInclude"
-                xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                xmlns:tei="http://www.tei-c.org/ns/1.0"
-		xmlns:sch="http://www.ascc.net/xml/schematron"
-		xmlns="http://www.ascc.net/xml/schematron"
-		xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                version="2.0"
-                exclude-result-prefixes="tei rng teix sch xi xs
-					 #default">
+<xsl:stylesheet 
+  xmlns:teix="http://www.tei-c.org/ns/Examples"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns="http://purl.oclc.org/dsdl/schematron"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  version="3.0"
+  exclude-result-prefixes="tei rng teix sch xi xs #default">
 
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
     <desc>
@@ -161,7 +161,7 @@ of this software, even if advised of the possibility of such damage.
 	  <xsl:choose>
 	    <xsl:when test="ancestor::tei:schemaSpec//sch:ns[@uri=$myns]">
 	      <xsl:value-of
-		  select="concat(ancestor::tei:schemaSpec//sch:ns[@uri=$myns]/@prefix,':')"/>
+		  select="concat((ancestor::tei:schemaSpec//sch:ns[@uri=$myns]/@prefix)[1],':')"/>
 	    </xsl:when>
 	    <xsl:otherwise>
 	      <xsl:message terminate="yes">schematron rule cannot work out prefix for <xsl:value-of select="ancestor::tei:elementSpec/@ident"/></xsl:message>

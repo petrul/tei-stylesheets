@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns="http://www.tei-c.org/ns/1.0" xmlns:teix="http://www.tei-c.org/ns/Examples" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes="a rng tei teix xs" version="2.0">
+<xsl:stylesheet xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns="http://www.tei-c.org/ns/1.0" xmlns:teix="http://www.tei-c.org/ns/Examples" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes="a rng tei teix xs" version="3.0">
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
     <desc>
       <p> TEI stylesheet dealing with converting other vocabularies to TEI </p>
@@ -129,7 +129,7 @@
           </list>
         </xsl:when>
         <xsl:when test="current-grouping-key()=2">
-          <list type="unordered">
+          <list rend="bulleted">
             <xsl:for-each select="current-group()">
               <xsl:element name="{@n}">
 		<xsl:apply-templates select="*|processing-instruction()|comment()|text()" mode="pass2"/>
@@ -138,7 +138,7 @@
           </list>
         </xsl:when>
         <xsl:when test="current-grouping-key()=3">
-          <list type="ordered">
+          <list rend="numbered">
             <xsl:for-each select="current-group()">
               <xsl:element name="{@n}">
 		<xsl:apply-templates select="*|processing-instruction()|comment()|text()" mode="pass2"/>

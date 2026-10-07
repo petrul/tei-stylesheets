@@ -4,7 +4,7 @@
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 exclude-result-prefixes="tei"
-                version="2.0">
+                version="3.0">
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl" scope="stylesheet" type="stylesheet">
       <desc>
          <p> TEI stylesheet dealing with elements from the figures module. </p>
@@ -124,6 +124,9 @@ of this software, even if advised of the possibility of such damage.
                         <xsl:value-of select="substring-before(@width,'px')"/>
                         <xsl:text>pt</xsl:text>
                      </xsl:when>
+                    <xsl:when test="ends-with(@width,'em')">
+                      <xsl:value-of select="@width"/>
+                    </xsl:when>
                      <xsl:when test="ends-with(@width,'in')">
                         <xsl:value-of select="@width"/>
                      </xsl:when>

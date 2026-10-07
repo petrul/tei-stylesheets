@@ -28,7 +28,7 @@
                 xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
                 
                 xmlns="http://www.tei-c.org/ns/1.0"
-                version="2.0"
+                version="3.0"
                 exclude-result-prefixes="#all">
     
     
@@ -79,7 +79,7 @@ of this software, even if advised of the possibility of such damage.
       <desc>Handle footnotes</desc>
    </doc>
     <xsl:template match="w:footnoteReference">
-        <note place="foot" xml:id="ftn{@w:id}" n="{@w:id}">
+        <note place="foot" xml:id="ftn{@w:id}" n="{count(preceding::w:footnoteReference) + 1}">
             <xsl:variable name="referenced-id" select="@w:id"/>
             <xsl:for-each
 		select="document(concat($wordDirectory,'/word/footnotes.xml'))//w:footnote[@w:id=$referenced-id]">

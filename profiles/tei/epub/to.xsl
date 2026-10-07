@@ -10,7 +10,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    exclude-result-prefixes="xlink rng tei teix xhtml a html xs xsl" version="2.0">
+    exclude-result-prefixes="xlink rng tei teix xhtml a html xs xsl" version="3.0">
 
   <xsl:import href="../../../epub/tei-to-epub.xsl"/>
   <xsl:import href="../../../odds/teiodds.xsl"/>
@@ -27,7 +27,7 @@
   <xsl:param name="auto">false</xsl:param>
   <xsl:param name="numberFrontHeadings">true</xsl:param>
   <xsl:param name="displayMode">rnc</xsl:param>
-  <xsl:param name="feedbackURL">http://www.tei-c.org/Consortium/contact.xml</xsl:param>
+  <xsl:param name="feedbackURL">https://tei-c.org/about/contact/</xsl:param>
   <xsl:param name="homeLabel">TEI P5 Guidelines</xsl:param>
   <xsl:param name="homeWords">TEI P5</xsl:param>
   <xsl:param name="institution">Text Encoding Initiative</xsl:param>

@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns="http://www.tei-c.org/ns/1.0"
 		xpath-default-namespace="http://www.tei-c.org/ns/1.0"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-		version="2.0">
+		version="3.0">
 <!--
 This software is dual-licensed:
 
@@ -37,12 +37,14 @@ theory of liability, whether in contract, strict liability, or tort
 of this software, even if advised of the possibility of such damage.
 
 -->
+  
+  <xsl:param name="defaultSource" select="'../source/p5subset.xml'"/>
 
   <xsl:template name="main">
     <elementList>
       <xsl:for-each
-	  select="doc('http://www.tei-c.org/release/xml/tei/odd/p5subset.xml')//elementSpec">
-	<gi><xsl:value-of select="@ident"/></gi>
+        select="doc($defaultSource)//elementSpec">
+        <gi><xsl:value-of select="@ident"/></gi>
       </xsl:for-each>
     </elementList>
   </xsl:template>
