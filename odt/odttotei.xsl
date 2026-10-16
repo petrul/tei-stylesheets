@@ -649,7 +649,7 @@ of this software, even if advised of the possibility of such damage.
 	<xsl:variable name="rendition"
 		      select="tei:inlineStyles($style,.)"/>
 	<xsl:choose>
-	  <xsl:when test="self::text:p and count(parent::table:table-cell/text:p)=1">
+	  <xsl:when test="self::text:p and count(parent::table:table-cell/*)=1">
 	    <xsl:if test="not($rendition='')">
 	      <xsl:attribute name="rend" select="$rendition"/>
 	    </xsl:if>
